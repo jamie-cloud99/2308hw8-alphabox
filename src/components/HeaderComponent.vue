@@ -58,7 +58,7 @@ const menuList = ref([
   },
   {
     title: "FAQ",
-    path: "",
+    path: "/faq",
   },
   {
     title: "聯絡我們",
