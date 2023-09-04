@@ -19,59 +19,56 @@
       </span>
     </p>
 
-   
-      <swiper-container
-        init="false"
-        ref="swiperEl"
-        scrollbar="true"
-        :slides-per-view="1"
-        :draggable="true"
-        :breakpoints="{ 1024: { slidesPerView: 3, enable: true } }"
-        :space-between="24"
-        class=""
+    <swiper-container
+      init="false"
+      ref="swiperEl"
+      scrollbar="true"
+      :slides-per-view="1"
+      :draggable="true"
+      :breakpoints="{ 1024: { slidesPerView: 3 } }"
+      :space-between="24"
+      class=""
+    >
+      <swiper-slide
+        class="odd:bg-primary-400 even:bg-white even:text-black"
+        v-for="item in sharingCard"
+        :key="item.name"
       >
-        <swiper-slide
-          class="odd:bg-primary-400 even:bg-white even:text-black"
-          v-for="item in sharingCard"
-          :key="item.name"
-        >
-          <div class="space-y-8 p-10">
-            <div class="flex items-center gap-x-2">
-              <p>{{ item.name }}</p>
-              <p>
-                <span class="material-icons align-middle text-[8px] leading-6">
-                  fiber_manual_record
-                </span>
-              </p>
-              <p>{{ item.region }}</p>
-            </div>
-            <p class="line-clamp-6 min-h-[192px]">
-              {{ item.content }}
+        <div class="space-y-8 p-10">
+          <div class="flex items-center gap-x-2">
+            <p>{{ item.name }}</p>
+            <p>
+              <span class="material-icons align-middle text-[8px] leading-6">
+                fiber_manual_record
+              </span>
             </p>
-            <div class="flex items-center gap-x-4">
-              <p>
-                <span class="material-icons align-middle">
-                  fiber_manual_record
-                </span>
-              </p>
-              <p>
-                <span class="material-icons align-middle">
-                  fiber_manual_record
-                </span>
-              </p>
-              <p>{{ item.product }}</p>
-            </div>
+            <p>{{ item.region }}</p>
           </div>
-        </swiper-slide>
-      </swiper-container>
-  
+          <p class="line-clamp-6 min-h-[192px]">
+            {{ item.content }}
+          </p>
+          <div class="flex items-center gap-x-4">
+            <p>
+              <span class="material-icons align-middle">
+                fiber_manual_record
+              </span>
+            </p>
+            <p>
+              <span class="material-icons align-middle">
+                fiber_manual_record
+              </span>
+            </p>
+            <p>{{ item.product }}</p>
+          </div>
+        </div>
+      </swiper-slide>
+    </swiper-container>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { register } from "swiper/element/bundle";
-// import { Scrollbar } from 'swiper/modules';
 
 register();
 
@@ -107,11 +104,11 @@ const sharingCard = ref([
 ]);
 
 const swiperEl = ref(null);
-
+const windowWidth = ref(0);
 const params = {
   // array with CSS styles
   injectStyles: [
-    `
+    ` 
       .swiper {
         overflow: initial
       }
@@ -121,23 +118,51 @@ const params = {
       `,
   ],
 };
+const paramsMobile = {
+  // array with CSS styles
+  injectStyles: [
+    ` 
+      .swiper-wrapper {
+        flex-wrap: wrap;
+        gap: 24px
+      }
+      `,
+  ],
+};
 
+const resizeWindow = () => {
+  windowWidth.value = window.innerWidth;
+};
 
+watch(windowWidth, () => {
+  if (windowWidth.value < 1024) {
+    if (!swiperEl.value.swiper.destroy) {
+      Object.assign(swiperEl.value, paramsMobile);
+      swiperEl.value.initialize();
+      swiperEl.value.swiper.destroy(true, true);
+    }
+  } else {
+    Object.assign(swiperEl.value, params);
+    swiperEl.value.initialize();
+  }
+});
 
 onMounted(() => {
-  Object.assign(swiperEl.value, params);
-  swiperEl.value.initialize();
-  if(window.innerWidth < 1024) {
-    console.log(swiperEl.value.swiper)
-    swiperEl.value.swiper.destroy(true, true)
+  window.addEventListener("resize", resizeWindow);
+  resizeWindow();
+
+  if (windowWidth.value < 1024) {
+    Object.assign(swiperEl.value, paramsMobile);
+    swiperEl.value.initialize();
+  } else {
+    Object.assign(swiperEl.value, params);
+    swiperEl.value.initialize();
   }
 });
 </script>
 
 <style>
 swiper-container::part(scrollbar) {
-  @apply static my-10 bg-white/20;
+  @apply static my-10 hidden bg-white/20 lg:block;
 }
-
-
 </style>
