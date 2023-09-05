@@ -22,7 +22,7 @@
     <swiper-container
       init="false"
       ref="swiperEl"
-      scrollbar="true"
+      :scrollbar="true"
       :slides-per-view="1"
       :draggable="true"
       :breakpoints="{ 1024: { slidesPerView: 3 } }"
@@ -62,6 +62,18 @@
           </div>
         </div>
       </swiper-slide>
+      <div slot="container-end" class="absolute bottom-0 translate-y-1/3 w-full">
+        <div class="grid grid-cols-3 gap-x-6">
+          <div class="col-span-2">
+            <div class="swiper-scrollbar">
+              <div class="swiper-scrollbar-drag"></div>
+            </div>
+          </div>
+          <div class="colspan-1">
+            <p class="font-bold leading-6 uppercase">scroll</p>
+          </div>
+        </div>
+      </div>
     </swiper-container>
   </div>
 </template>
@@ -105,15 +117,17 @@ const sharingCard = ref([
 
 const swiperEl = ref(null);
 const windowWidth = ref(0);
+
 const params = {
   // array with CSS styles
   injectStyles: [
     ` 
       .swiper {
-        overflow: initial
+        overflow: initial;
       }
       .swiper-scrollbar-drag {
         background: white;
+        width: 75%;
       }
       `,
   ],
@@ -163,6 +177,6 @@ onMounted(() => {
 
 <style>
 swiper-container::part(scrollbar) {
-  @apply static my-10 hidden bg-white/20 lg:block;
+  @apply static my-10 hidden bg-white/20 w-[66%] lg:block;
 }
 </style>
